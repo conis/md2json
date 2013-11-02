@@ -1,6 +1,6 @@
 {
   "name": "md2json",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "将markdown转换为json，适用于带meta的文章类markdown",
   "main": "index.js",
   "scripts": {
