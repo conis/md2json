@@ -10,10 +10,11 @@ var _moment = require('moment')
 
 /*
  @summary 扫描所有的markdown
- @param {Object} options - 配置参数
- @param {Function} callback - 回调函数，callback(article);
+ @param {String} dir - 要扫描的文件夹
+ @param {Array | RegExp} filter - 过滤条件，Array: 根据扩展名过滤；RegExp：根据正则过滤
+ @param {Array | null} maps - 影射规则
+ @param {Function} callback - 回调函数，callback(json);
  */
-
 exports.scan = function(dir, filter, maps, callback){
   //扫描本地指定目录
   scanDirectory(dir, filter, function(content, filename){
@@ -26,7 +27,7 @@ exports.scan = function(dir, filter, maps, callback){
 /*
  @summary 转换markdown格式的文本为article
  @param {String} text - markdown格式的文本
- @param {Object} options - 选项
+ @returns {Object} 返回转换后的JSON数据
  */
 exports.convert = function(text, maps){
   var metaText = _mde.metadata(text);
