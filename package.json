@@ -1,0 +1,29 @@
+{
+  "name": "md2json",
+  "version": "0.0.1",
+  "description": "将markdown转换为json，适用于带meta的文章类markdown",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/conis/md2json"
+  },
+  "keywords": [
+    "markdown",
+    "convert"
+  ],
+  "dependencies":{
+    "underscore": "*",
+    "moment": "*",
+    "markdown-extra": "*"
+  },
+  "devDependencies":{
+    "mocha": "*",
+    "expect.js" : "*",
+    "strformat": "*"
+  },
+  "author": "conis",
+  "license": "MIT"
+}
