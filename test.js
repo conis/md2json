@@ -1,4 +1,5 @@
 var _md2json = require('./index')
+  , _path = require('path')
   , _strformat = require('strformat')
   , expect = require('expect.js')
   , _moment = require('moment');
@@ -68,4 +69,45 @@ describe('分析meta', function(){
     expect(result).to.have.key('badkey');
     expect(result.badkey).to.equal('');
   })
+});
+
+describe('测试扫描文件', function(){
+  var dir = _path.join(__dirname, 'markdown');
+  //以.md或.markdown结尾
+  var filter = /\.((md)|(markdown))$/i;
+  var maps = [
+    {
+      match: /title/i,
+      key: 'title'
+    },{
+      match: /date/i,
+      key: 'publish_date',
+      type: 'date',
+      format: ["YYYY-MM-DD hh:mm:ss", "YYYY-MM-DD hh:mm", 'YYYY-MM-DD']
+    },{
+      match: /tags?/i,
+      key: 'tags',
+      type: 'array'
+    },{
+      match: /type/i,
+      key: 'type'
+    },{
+      match: /status/i,
+      key: 'status'
+    },{
+      match: /excerpt/i,
+      key: 'excerpt'
+    },{
+      match: /id/i,
+      key: 'id'
+    }
+  ];
+
+  var result = [];
+  _md2json.scan(dir, filter, maps, function(json){
+    result.push(json);
+  });
+
+  expect(result).to.have.length(3);
+  console.log(result);
 });
