@@ -38,10 +38,12 @@ describe('分析meta', function(){
     },{
       match: 'badkey',
       key: 'badkey'
+    },{
+      match: 'link',
+      key: 'id'
     }
   ];
   var result = _md2json.convert(markdown, options);
-
   it('检查标题', function(){
     expect(result.title).to.equal(title);
   });

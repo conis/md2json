@@ -43,34 +43,45 @@ exports.convert = function(text, maps){
  @returns {Object} 格式化的meta
  */
 function extraMeta(meta, maps){
-  var result = {};
-  var rows = meta.split(/\n/ig);
-  rows.forEach(function(row){
+  var metalist = _.map(meta.split(/\n/ig), function(row){
     var index = row.indexOf(':');
     var key = row.substring(0, index).trim();
     var value = row.substring(index + 1, row.length).trim();
-
-    //没有指定map，则获取所有的key/value
-    if(!maps){
-      result[key] = value;
-      return;
-    }
-
-    var map = findMap(key, maps);
-    if(!map) return;
-
-    //根据类型格式化meta
-    switch(map.type){
-      case 'array':
-        value = toArray(value, map.separator)
-        break;
-      case 'date':
-        value = toDatetime(value, map.format);
-        break;
-    }
-    result[map.key] = value;
+    return {
+      key: key,
+      value: value
+    };
   });
-  return result;
+
+  //没有指定map，则获取所有的key/value
+  if(maps){
+    //根据map重新映射meta
+    metalist = _.map(maps, function(map){
+      var value = findMetaValue(map, metalist);
+      if(value === undefined) return;
+
+      //根据类型格式化meta
+      switch(map.type){
+        case 'array':
+          value = toArray(value, map.separator)
+          break;
+        case 'date':
+          value = toDatetime(value, map.format);
+          break;
+      };
+
+      var result = {};
+      result[map.key] = value;
+      return result;
+    });
+  }
+
+  //重新组合meta
+  var list = {};
+  _.each(metalist, function(item){
+    _.extend(list, item);
+  });
+  return list;
 }
 
 /*
@@ -91,21 +102,25 @@ function toDatetime(text, format){
 }
 
 //查找map
-function findMap(key, maps){
-  var map;
-  _.every(maps, function(item){
+function findMetaValue(map, metalist){
+  var value;
+  //字符型匹配
+  var matchString = typeof(map.match) == 'string';
+  var matchRegexp = !matchString && map.match instanceof RegExp;
+
+  _.every(metalist, function(meta){
     var isMatch = false;
-    if(typeof(item.match) == 'string'){
-      isMatch = item.match == key;
-    }else{
-      isMatch = item.match.test(key);
+    if(matchString){
+      isMatch = map.match == meta.key;
+    }else if(matchRegexp){
+      isMatch = map.match.test(meta.key);
     }
 
-    if(isMatch) map = item;
+    if(isMatch) value = meta.value;
     return !isMatch;
   });
 
-  return map;
+  return value;
 }
 
 //扫描本地文件夹
